@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -31,9 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class DLBWatchFace extends CanvasWatchFaceService   {
     private static final String TAG = "DLBWatchFace";
 
-    float mDateXOffset;
     float mDateYOffset;
-    float mDayXOffset;
     float mDayYOffset;
     String[] daysOfWeek = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
     String[] monthsOfYear = {"January","February","March","April","May","June","July","August","September","October","November","December"};
@@ -207,13 +204,12 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             canvas.drawText(str, centerX, mDateYOffset, mTextPaint);
             // Draw the ticks.
             float innerTickRadius = centerX - 15;
-            float outerTickRadius = centerX;
             for (int tickIndex = 0; tickIndex < 12; tickIndex++) {
                 float tickRot = (float) (tickIndex * Math.PI * 2 / 12);
                 float innerX = (float) Math.sin(tickRot) * innerTickRadius;
                 float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
-                float outerX = (float) Math.sin(tickRot) * outerTickRadius;
-                float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
+                float outerX = (float) Math.sin(tickRot) * centerX;
+                float outerY = (float) -Math.cos(tickRot) * centerX;
                 canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mTickPaint);
             }
 
@@ -222,14 +218,14 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 float tickRot = (float) (tickIndex * Math.PI * 2 / 60);
                 float innerX = (float) Math.sin(tickRot) * innerTickRadius;
                 float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
-                float outerX = (float) Math.sin(tickRot) * outerTickRadius;
-                float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
+                float outerX = (float) Math.sin(tickRot) * centerX;
+                float outerY = (float) -Math.cos(tickRot) * centerX;
                 canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mSmallTickPaint);
             }
             for (int i = 1; i <= 12; i++) {
                 float x = (float) Math.sin(Math.PI * 2 * (i / (float) 12)) * 110;
                 float y = -(float) Math.cos(Math.PI * 2 * (i / (float) 12)) * 110;
-                canvas.drawText(String.format("%d", i), 140 + x, 140 + y - vCenter(), mTextPaint);
+                canvas.drawText(String.format("%d", i), centerX + x, centerY + y - vCenter(), mTextPaint);
             }
             float secRot = mTime.second / 30f * (float) Math.PI;
             float minRot = mTime.minute / 30f * 180f;
