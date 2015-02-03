@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DLBWatchFace</string>
+    <string name="config_text">This is the WatchFace Config Screen</string>
+</resources>

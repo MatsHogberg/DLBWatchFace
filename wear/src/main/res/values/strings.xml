@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DLBWatchFace</string>
+    <string name="analog_name">DLB WatchFace</string>
+    <string name="digital_name">DLB Digital Face</string>
+
+</resources>
