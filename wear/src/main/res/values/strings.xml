@@ -4,5 +4,6 @@
     <string name="app_name">DLBWatchFace</string>
     <string name="analog_name">DLB WatchFace</string>
     <string name="digital_name">DLB Digital Face</string>
+    <string name="title_activity_dark">DarkActivity</string>
 
 </resources>
