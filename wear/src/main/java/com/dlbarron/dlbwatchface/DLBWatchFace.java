@@ -24,6 +24,7 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
+import android.view.WindowInsets;
 
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -83,6 +84,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
         Time mTime;
         boolean mLowBitAmbient;
         boolean mRegisteredTimeZoneReceiver = false;
+        Resources resources = DLBWatchFace.this.getResources();
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
             public void handleMessage(Message message) {
@@ -106,7 +108,29 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 mTime.setToNow();
             }
         };
+        @Override
+        public void onApplyWindowInsets(WindowInsets insets) {
+            super.onApplyWindowInsets(insets);
 
+            // Load resources that have alternate values for round watches.
+
+            boolean isRound = insets.isRound();
+            if(isRound) {
+                mDateYOffset = resources.getDimension(R.dimen.y_date_offset_round);
+                mDayYOffset = resources.getDimension(R.dimen.y_day_offset_round);
+            }
+            else {
+                mDateYOffset = resources.getDimension(R.dimen.y_date_offset_square);
+                mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square);
+
+            }
+            Drawable drawable = resources.getDrawable(R.drawable.hour);
+            mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
+
+            drawable = resources.getDrawable(R.drawable.minute);
+            mMinuteBitmap = ((BitmapDrawable) drawable).getBitmap();
+
+        }
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
@@ -118,19 +142,10 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                     .setStatusBarGravity(Gravity.CENTER | Gravity.TOP)
                     .setHotwordIndicatorGravity(Gravity.CENTER | Gravity.TOP)
                     .build());
-            Resources resources = DLBWatchFace.this.getResources();
-            float textSize = resources.getDimension(R.dimen.text_size);
-            mDateYOffset = resources.getDimension(R.dimen.y_date_offset);
-            mDayYOffset = resources.getDimension(R.dimen.y_day_offset);
 
+            float textSize = resources.getDimension(R.dimen.text_size);
             mBackgroundPaint = new Paint();
             mBackgroundPaint.setColor(Color.parseColor("black"));
-
-            Drawable drawable = resources.getDrawable(R.drawable.hour);
-            mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
-
-            drawable = resources.getDrawable(R.drawable.minute);
-            mMinuteBitmap = ((BitmapDrawable) drawable).getBitmap();
 
             mSecondPaint = new Paint();
             mSecondPaint.setARGB(255, 255, 0, 0);
