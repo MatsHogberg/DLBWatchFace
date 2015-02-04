@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public class DarkActivity extends Activity {
+    private static final String TAG="DarkActivity";
     private float originalBrightness;
 
     @Override
