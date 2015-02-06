@@ -21,7 +21,6 @@ import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
@@ -37,6 +36,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
     float mDayYOffset;
     String[] daysOfWeek = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
     String[] monthsOfYear = {"January","February","March","April","May","June","July","August","September","October","November","December"};
+    int batteryLevel;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -47,7 +47,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
         public void onReceive(Context context, Intent intent) {
             int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
             boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
-            Log.i(TAG,"Charging: " + isCharging);
+            batteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             if(isCharging) {
                 Intent i = new Intent();
                 i.setClassName("com.dlbarron.dlbwatchface", "com.dlbarron.dlbwatchface.DarkActivity");
@@ -195,12 +195,12 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             super.onAmbientModeChanged(inAmbientMode);
             if(inAmbientMode) {
                 mTextPaint.setARGB(0,0,0,0);
-                mTickPaint.setARGB(0,0,0,0);
+                //mTickPaint.setARGB(0,0,0,0);
                 mSmallTickPaint.setARGB(0,0,0,0);
             }
             else {
                 mTextPaint.setARGB(255, 200, 200, 200);
-                mTickPaint.setARGB(255, 200, 200, 200);
+                //mTickPaint.setARGB(255, 200, 200, 200);
                 mSmallTickPaint.setARGB(255, 200, 200, 200);
             }
             if (mLowBitAmbient) {
@@ -229,7 +229,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
             mTime.setToNow();
-
+            //change text color based on battery
             float centerX = bounds.width() / 2f;
             float centerY = bounds.height() / 2f;
             // Draw the background
