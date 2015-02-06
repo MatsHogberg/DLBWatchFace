@@ -250,20 +250,21 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 float outerY = (float) -Math.cos(tickRot) * centerX;
                 canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mTickPaint);
             }
-
-            innerTickRadius = centerX - 10;
-            for (int tickIndex = 0; tickIndex < 60; tickIndex++) {
-                float tickRot = (float) (tickIndex * Math.PI * 2 / 60);
-                float innerX = (float) Math.sin(tickRot) * innerTickRadius;
-                float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
-                float outerX = (float) Math.sin(tickRot) * centerX;
-                float outerY = (float) -Math.cos(tickRot) * centerX;
-                canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mSmallTickPaint);
-            }
-            for (int i = 1; i <= 12; i++) {
-                float x = (float) Math.sin(Math.PI * 2 * (i / (float) 12)) * 110;
-                float y = -(float) Math.cos(Math.PI * 2 * (i / (float) 12)) * 110;
-                canvas.drawText(String.format("%d", i), centerX + x, centerY + y - vCenter(), mTextPaint);
+            if (!isInAmbientMode()) {
+                innerTickRadius = centerX - 10;
+                for (int tickIndex = 0; tickIndex < 60; tickIndex++) {
+                    float tickRot = (float) (tickIndex * Math.PI * 2 / 60);
+                    float innerX = (float) Math.sin(tickRot) * innerTickRadius;
+                    float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
+                    float outerX = (float) Math.sin(tickRot) * centerX;
+                    float outerY = (float) -Math.cos(tickRot) * centerX;
+                    canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mSmallTickPaint);
+                }
+                for (int i = 1; i <= 12; i++) {
+                    float x = (float) Math.sin(Math.PI * 2 * (i / (float) 12)) * 110;
+                    float y = -(float) Math.cos(Math.PI * 2 * (i / (float) 12)) * 110;
+                    canvas.drawText(String.format("%d", i), centerX + x, centerY + y - vCenter(), mTextPaint);
+                }
             }
             float secRot = mTime.second / 30f * (float) Math.PI;
             float minRot = mTime.minute / 30f * 180f;
