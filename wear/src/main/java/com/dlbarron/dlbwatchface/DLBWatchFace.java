@@ -74,9 +74,9 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
     private class Engine extends CanvasWatchFaceService.Engine {
         static final int MSG_UPDATE_TIME = 0;
         Paint mBackgroundPaint;
-        Paint mSecondPaint;
         Bitmap mHourBitmap, mHourScaledBitmap;
         Bitmap mMinuteBitmap, mMinuteScaledBitmap;
+        Bitmap mSecondBitmap, mSecondScaledBitmap;
         Paint mTickPaint;
         Paint mSmallTickPaint;
         Paint mTextPaint;
@@ -124,11 +124,14 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square);
 
             }
-            Drawable drawable = resources.getDrawable(R.drawable.hour);
+            Drawable drawable = resources.getDrawable(R.drawable.img195);
             mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
 
-            drawable = resources.getDrawable(R.drawable.minute);
+            drawable = resources.getDrawable(R.drawable.img196);
             mMinuteBitmap = ((BitmapDrawable) drawable).getBitmap();
+
+            drawable = resources.getDrawable(R.drawable.img199);
+            mSecondBitmap = ((BitmapDrawable) drawable).getBitmap();
 
         }
         @Override
@@ -146,12 +149,6 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             float textSize = resources.getDimension(R.dimen.text_size);
             mBackgroundPaint = new Paint();
             mBackgroundPaint.setColor(Color.parseColor("black"));
-
-            mSecondPaint = new Paint();
-            mSecondPaint.setARGB(255, 255, 0, 0);
-            mSecondPaint.setStrokeWidth(2.f);
-            mSecondPaint.setAntiAlias(true);
-            mSecondPaint.setStrokeCap(Paint.Cap.BUTT);
 
             mTickPaint = new Paint();
             mTickPaint.setARGB(255, 200, 200, 200);
@@ -205,7 +202,6 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             }
             if (mLowBitAmbient) {
                 boolean antiAlias = !inAmbientMode;
-                mSecondPaint.setAntiAlias(antiAlias);
                 mTickPaint.setAntiAlias(antiAlias);
                 mSmallTickPaint.setAntiAlias(antiAlias);
                 mTextPaint.setAntiAlias(antiAlias);
@@ -220,7 +216,6 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             boolean inMuteMode = (interruptionFilter == WatchFaceService.INTERRUPTION_FILTER_NONE);
             if (mMute != inMuteMode) {
                 mMute = inMuteMode;
-                mSecondPaint.setAlpha(inMuteMode ? 80 : 255);
                 mTextPaint.setAlpha(inMuteMode ? 80 : 255);
                 invalidate();
             }
@@ -266,7 +261,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                     canvas.drawText(String.format("%d", i), centerX + x, centerY + y - vCenter(), mTextPaint);
                 }
             }
-            float secRot = mTime.second / 30f * (float) Math.PI;
+            float secRot = mTime.second / 30f * 180f;
             float minRot = mTime.minute / 30f * 180f;
             float hrRot = ((mTime.hour + (mTime.minute / 60f)) / 6f * 180f);
 
@@ -287,11 +282,13 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             canvas.restore();
 
             if (!isInAmbientMode()) {
-                float secLength = centerX - 20;
-                float secX = (float) Math.sin(secRot) * secLength;
-                float secY = (float) -Math.cos(secRot) * secLength;
-                canvas.drawLine(centerX, centerY, centerX + secX, centerY + secY, mSecondPaint);
-                canvas.drawCircle(centerX,centerY, 4, mSecondPaint);
+                if (mSecondScaledBitmap == null || mSecondScaledBitmap.getWidth() != bounds.width() || mSecondScaledBitmap.getHeight() != bounds.height()) {
+                    mSecondScaledBitmap = Bitmap.createScaledBitmap(mSecondBitmap, bounds.width(), bounds.height(), true);
+                }
+                canvas.save();
+                canvas.rotate(secRot,canvas.getWidth()/2,canvas.getHeight()/2);
+                canvas.drawBitmap(mSecondScaledBitmap, 0, 0, null);
+                canvas.restore();
             }
         }
         private float vCenter() {
