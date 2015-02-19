@@ -5,5 +5,8 @@
     <string name="analog_name">DLB WatchFace</string>
     <string name="digital_name">DLB Digital Face</string>
     <string name="title_activity_dark">DarkActivity</string>
+    <string name="title_activity_dlbconfig">DLBConfigActivity</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
 
 </resources>

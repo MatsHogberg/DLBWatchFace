@@ -192,12 +192,10 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             super.onAmbientModeChanged(inAmbientMode);
             if(inAmbientMode) {
                 mTextPaint.setARGB(0,0,0,0);
-                //mTickPaint.setARGB(0,0,0,0);
                 mSmallTickPaint.setARGB(0,0,0,0);
             }
             else {
                 mTextPaint.setARGB(255, 200, 200, 200);
-                //mTickPaint.setARGB(255, 200, 200, 200);
                 mSmallTickPaint.setARGB(255, 200, 200, 200);
             }
             if (mLowBitAmbient) {
@@ -258,7 +256,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 for (int i = 1; i <= 12; i++) {
                     float x = (float) Math.sin(Math.PI * 2 * (i / (float) 12)) * 110;
                     float y = -(float) Math.cos(Math.PI * 2 * (i / (float) 12)) * 110;
-                    canvas.drawText(String.format("%d", i), centerX + x, centerY + y - vCenter(), mTextPaint);
+                    canvas.drawText(String.format("%d", i), centerX + x, centerY + y - ((mTextPaint.ascent() + mTextPaint.descent()) / 2), mTextPaint);
                 }
             }
             float secRot = mTime.second / 30f * 180f;
@@ -290,9 +288,6 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 canvas.drawBitmap(mSecondScaledBitmap, 0, 0, null);
                 canvas.restore();
             }
-        }
-        private float vCenter() {
-            return (mTextPaint.ascent() + mTextPaint.descent()) / 2;
         }
 
         @Override
