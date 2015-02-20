@@ -11,15 +11,22 @@
     <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <service
-            android:name=".DLBWatchFace"
+            android:name=".DLBRoundWatchFace"
             android:allowEmbedded="true"
-            android:label="@string/analog_name"
+            android:label="@string/analog_round_name"
             android:permission="android.permission.BIND_WALLPAPER"
             android:taskAffinity="" >
             <meta-data
@@ -27,18 +34,33 @@
                 android:resource="@xml/watch_face" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview"
-                android:resource="@drawable/analog_preview" />
+                android:resource="@drawable/round_preview" />
             <meta-data
-                android:name=
-                    "com.google.android.wearable.watchface.companionConfigurationAction"
-                android:value=
-                    "com.dlbarron.dlbwatchface.MOBILE_CONFIG" />
-            <!-- wearable configuration activity -->
+                android:name="com.google.android.wearable.watchface.companionConfigurationAction"
+                android:value="com.dlbarron.dlbwatchface.MOBILE_CONFIG" />
+
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+
+                <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".DLBSquareWatchFace"
+            android:allowEmbedded="true"
+            android:label="@string/analog_square_name"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:taskAffinity="" >
             <meta-data
-                android:name=
-                    "com.google.android.wearable.watchface.wearableConfigurationAction"
-                android:value=
-                    "com.dlbarron.dlbwatchface.WEAR_CONFIG" />
+                android:name="android.service.wallpaper"
+                android:resource="@xml/watch_face" />
+            <meta-data
+                android:name="com.google.android.wearable.watchface.preview"
+                android:resource="@drawable/round_preview" />
+            <meta-data
+                android:name="com.google.android.wearable.watchface.companionConfigurationAction"
+                android:value="com.dlbarron.dlbwatchface.MOBILE_CONFIG" />
+
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
 
@@ -53,17 +75,10 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".DLBConfigActivity"
-            android:label="@string/title_activity_dlbconfig" >
-            <intent-filter>
-                <action android:name=
-                    "com.dlbarron.dlbwatchface.WEAR_CONFIG" />
-                <category android:name=
-                    "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

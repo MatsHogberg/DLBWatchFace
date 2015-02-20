@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -29,13 +28,14 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 
-public class DLBWatchFace extends CanvasWatchFaceService   {
-    private static final String TAG = "DLBWatchFace";
+public class DLBSquareWatchFace extends CanvasWatchFaceService   {
+    private static final String TAG = "DLBSquareWatchFace";
 
+    float mDateXOffset;
     float mDateYOffset;
+    float mDayXOffset;
     float mDayYOffset;
-    String[] daysOfWeek = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
-    String[] monthsOfYear = {"January","February","March","April","May","June","July","August","September","October","November","December"};
+    String[] daysOfWeek = {"SUN","MON","TUE","WED","THR","FRI","SAT"};
     int batteryLevel;
     @Override
     public void onCreate() {
@@ -73,18 +73,17 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
     }
     private class Engine extends CanvasWatchFaceService.Engine {
         static final int MSG_UPDATE_TIME = 0;
-        Paint mBackgroundPaint;
         Bitmap mHourBitmap, mHourScaledBitmap;
         Bitmap mMinuteBitmap, mMinuteScaledBitmap;
         Bitmap mSecondBitmap, mSecondScaledBitmap;
-        Paint mTickPaint;
+        Bitmap mBackgroundBitmap, mBackgroundScaledBitmap;
         Paint mSmallTickPaint;
         Paint mTextPaint;
         boolean mMute;
         Time mTime;
         boolean mLowBitAmbient;
         boolean mRegisteredTimeZoneReceiver = false;
-        Resources resources = DLBWatchFace.this.getResources();
+        Resources resources = DLBSquareWatchFace.this.getResources();
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
             public void handleMessage(Message message) {
@@ -114,16 +113,11 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
 
             // Load resources that have alternate values for round watches.
 
-            boolean isRound = insets.isRound();
-            if(isRound) {
-                mDateYOffset = resources.getDimension(R.dimen.y_date_offset_round);
-                mDayYOffset = resources.getDimension(R.dimen.y_day_offset_round);
-            }
-            else {
-                mDateYOffset = resources.getDimension(R.dimen.y_date_offset_square);
-                mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square);
-
-            }
+            mDateYOffset = resources.getDimension(R.dimen.y_date_offset_square_face);
+            mDateXOffset = resources.getDimension(R.dimen.x_date_offset_square_face);
+            mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square_face);
+            mDayXOffset = resources.getDimension(R.dimen.x_day_offset_square_face);
+            // Load the 3 hand images
             Drawable drawable = resources.getDrawable(R.drawable.img195);
             mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
 
@@ -132,13 +126,16 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
 
             drawable = resources.getDrawable(R.drawable.img199);
             mSecondBitmap = ((BitmapDrawable) drawable).getBitmap();
+            //Load the background
+            drawable = resources.getDrawable(R.drawable.square_bg);
+            mBackgroundBitmap = ((BitmapDrawable) drawable).getBitmap();
 
         }
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
 
-            setWatchFaceStyle(new WatchFaceStyle.Builder(DLBWatchFace.this)
+            setWatchFaceStyle(new WatchFaceStyle.Builder(DLBSquareWatchFace.this)
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_SHORT)
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
                     .setShowSystemUiTime(false)
@@ -147,17 +144,10 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                     .build());
 
             float textSize = resources.getDimension(R.dimen.text_size);
-            mBackgroundPaint = new Paint();
-            mBackgroundPaint.setColor(Color.parseColor("black"));
-
-            mTickPaint = new Paint();
-            mTickPaint.setARGB(255, 200, 200, 200);
-            mTickPaint.setStrokeWidth(3.f);
-            mTickPaint.setAntiAlias(true);
 
             mSmallTickPaint = new Paint();
             mSmallTickPaint.setARGB(255, 200, 200, 200);
-            mSmallTickPaint.setStrokeWidth(1.f);
+            mSmallTickPaint.setStrokeWidth(1.5f);
             mSmallTickPaint.setAntiAlias(true);
 
             mTextPaint = new Paint();
@@ -200,7 +190,6 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             }
             if (mLowBitAmbient) {
                 boolean antiAlias = !inAmbientMode;
-                mTickPaint.setAntiAlias(antiAlias);
                 mSmallTickPaint.setAntiAlias(antiAlias);
                 mTextPaint.setAntiAlias(antiAlias);
             }
@@ -224,41 +213,15 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             mTime.setToNow();
             //change text color based on battery
             float centerX = bounds.width() / 2f;
-            float centerY = bounds.height() / 2f;
             // Draw the background
-            canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-            // Draw the date.
+            if (mBackgroundScaledBitmap == null || mBackgroundScaledBitmap.getWidth() != bounds.width() || mBackgroundScaledBitmap.getHeight() != bounds.height()) {
+                mBackgroundScaledBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap,bounds.width(), bounds.height(), true);
+            }
+            canvas.drawBitmap(mBackgroundScaledBitmap, 0, 0, null);
             String str = daysOfWeek[mTime.weekDay];
-            canvas.drawText(str, centerX, mDayYOffset, mTextPaint);
-            str = monthsOfYear[mTime.month] + " " + mTime.monthDay + ", " + mTime.year;
-            //Draw the day
-            canvas.drawText(str, centerX, mDateYOffset, mTextPaint);
-            // Draw the ticks.
-            float innerTickRadius = centerX - 15;
-            for (int tickIndex = 0; tickIndex < 12; tickIndex++) {
-                float tickRot = (float) (tickIndex * Math.PI * 2 / 12);
-                float innerX = (float) Math.sin(tickRot) * innerTickRadius;
-                float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
-                float outerX = (float) Math.sin(tickRot) * centerX;
-                float outerY = (float) -Math.cos(tickRot) * centerX;
-                canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mTickPaint);
-            }
-            if (!isInAmbientMode()) {
-                innerTickRadius = centerX - 10;
-                for (int tickIndex = 0; tickIndex < 60; tickIndex++) {
-                    float tickRot = (float) (tickIndex * Math.PI * 2 / 60);
-                    float innerX = (float) Math.sin(tickRot) * innerTickRadius;
-                    float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
-                    float outerX = (float) Math.sin(tickRot) * centerX;
-                    float outerY = (float) -Math.cos(tickRot) * centerX;
-                    canvas.drawLine(centerX + innerX, centerY + innerY, centerX + outerX, centerY + outerY, mSmallTickPaint);
-                }
-                for (int i = 1; i <= 12; i++) {
-                    float x = (float) Math.sin(Math.PI * 2 * (i / (float) 12)) * 110;
-                    float y = -(float) Math.cos(Math.PI * 2 * (i / (float) 12)) * 110;
-                    canvas.drawText(String.format("%d", i), centerX + x, centerY + y - ((mTextPaint.ascent() + mTextPaint.descent()) / 2), mTextPaint);
-                }
-            }
+            canvas.drawText(str, mDayXOffset, mDayYOffset, mTextPaint);
+
+            canvas.drawText(String.format("%2d", mTime.monthDay), mDateXOffset, mDateYOffset, mTextPaint);
             float secRot = mTime.second / 30f * 180f;
             float minRot = mTime.minute / 30f * 180f;
             float hrRot = ((mTime.hour + (mTime.minute / 60f)) / 6f * 180f);
@@ -311,7 +274,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
             }
             mRegisteredTimeZoneReceiver = true;
             IntentFilter filter = new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED);
-            DLBWatchFace.this.registerReceiver(mTimeZoneReceiver, filter);
+            DLBSquareWatchFace.this.registerReceiver(mTimeZoneReceiver, filter);
         }
 
         private void unregisterReceiver() {
@@ -319,7 +282,7 @@ public class DLBWatchFace extends CanvasWatchFaceService   {
                 return;
             }
             mRegisteredTimeZoneReceiver = false;
-            DLBWatchFace.this.unregisterReceiver(mTimeZoneReceiver);
+            DLBSquareWatchFace.this.unregisterReceiver(mTimeZoneReceiver);
         }
 
         private void updateTimer() {

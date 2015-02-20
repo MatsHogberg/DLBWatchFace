@@ -2,11 +2,9 @@
 <resources>
 
     <string name="app_name">DLBWatchFace</string>
-    <string name="analog_name">DLB WatchFace</string>
-    <string name="digital_name">DLB Digital Face</string>
+    <string name="analog_round_name">DLB Round</string>
+    <string name="analog_square_name">DLB Square</string>
     <string name="title_activity_dark">DarkActivity</string>
-    <string name="title_activity_dlbconfig">DLBConfigActivity</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
+    <string name="my_analog_name">My Analog</string>
 
 </resources>
