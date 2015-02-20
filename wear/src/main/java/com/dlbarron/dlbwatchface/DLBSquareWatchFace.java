@@ -77,7 +77,6 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
         Bitmap mMinuteBitmap, mMinuteScaledBitmap;
         Bitmap mSecondBitmap, mSecondScaledBitmap;
         Bitmap mBackgroundBitmap, mBackgroundScaledBitmap;
-        Paint mSmallTickPaint;
         Paint mTextPaint;
         boolean mMute;
         Time mTime;
@@ -145,11 +144,6 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
 
             float textSize = resources.getDimension(R.dimen.text_size);
 
-            mSmallTickPaint = new Paint();
-            mSmallTickPaint.setARGB(255, 200, 200, 200);
-            mSmallTickPaint.setStrokeWidth(1.5f);
-            mSmallTickPaint.setAntiAlias(true);
-
             mTextPaint = new Paint();
             mTextPaint.setARGB(255, 200, 200, 200);
             mTextPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
@@ -182,15 +176,12 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
             super.onAmbientModeChanged(inAmbientMode);
             if(inAmbientMode) {
                 mTextPaint.setARGB(0,0,0,0);
-                mSmallTickPaint.setARGB(0,0,0,0);
             }
             else {
                 mTextPaint.setARGB(255, 200, 200, 200);
-                mSmallTickPaint.setARGB(255, 200, 200, 200);
             }
             if (mLowBitAmbient) {
                 boolean antiAlias = !inAmbientMode;
-                mSmallTickPaint.setAntiAlias(antiAlias);
                 mTextPaint.setAntiAlias(antiAlias);
             }
             invalidate();
