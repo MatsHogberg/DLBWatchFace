@@ -31,11 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class DLBSquareWatchFace extends CanvasWatchFaceService   {
     private static final String TAG = "DLBSquareWatchFace";
 
-    float mDateXOffset;
-    float mDateYOffset;
-    float mDayXOffset;
-    float mDayYOffset;
-    String[] daysOfWeek = {"SUN","MON","TUE","WED","THR","FRI","SAT"};
     int batteryLevel;
     @Override
     public void onCreate() {
@@ -72,6 +67,7 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
         return new Engine();
     }
     private class Engine extends CanvasWatchFaceService.Engine {
+        String[] daysOfWeek = {"SUN","MON","TUE","WED","THR","FRI","SAT"};
         static final int MSG_UPDATE_TIME = 0;
         Bitmap mHourBitmap, mHourScaledBitmap;
         Bitmap mMinuteBitmap, mMinuteScaledBitmap;
@@ -82,6 +78,10 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
         Time mTime;
         boolean mLowBitAmbient;
         boolean mRegisteredTimeZoneReceiver = false;
+        float mDateXOffset;
+        float mDateYOffset;
+        float mDayXOffset;
+        float mDayYOffset;
         Resources resources = DLBSquareWatchFace.this.getResources();
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
@@ -202,17 +202,17 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
             mTime.setToNow();
-            //change text color based on battery
-            float centerX = bounds.width() / 2f;
             // Draw the background
             if (mBackgroundScaledBitmap == null || mBackgroundScaledBitmap.getWidth() != bounds.width() || mBackgroundScaledBitmap.getHeight() != bounds.height()) {
                 mBackgroundScaledBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap,bounds.width(), bounds.height(), true);
             }
             canvas.drawBitmap(mBackgroundScaledBitmap, 0, 0, null);
+            // Draw day of week
             String str = daysOfWeek[mTime.weekDay];
             canvas.drawText(str, mDayXOffset, mDayYOffset, mTextPaint);
-
+            // Draw the date
             canvas.drawText(String.format("%2d", mTime.monthDay), mDateXOffset, mDateYOffset, mTextPaint);
+            // Calculate hand rotations
             float secRot = mTime.second / 30f * 180f;
             float minRot = mTime.minute / 30f * 180f;
             float hrRot = ((mTime.hour + (mTime.minute / 60f)) / 6f * 180f);

@@ -31,10 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class DLBRoundWatchFace extends CanvasWatchFaceService   {
     private static final String TAG = "DLBRoundWatchFace";
 
-    float mDateYOffset;
-    float mDayYOffset;
-    String[] daysOfWeek = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
-    String[] monthsOfYear = {"January","February","March","April","May","June","July","August","September","October","November","December"};
     int batteryLevel;
     @Override
     public void onCreate() {
@@ -71,6 +67,8 @@ public class DLBRoundWatchFace extends CanvasWatchFaceService   {
         return new Engine();
     }
     private class Engine extends CanvasWatchFaceService.Engine {
+        String[] daysOfWeek = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+        String[] monthsOfYear = {"January","February","March","April","May","June","July","August","September","October","November","December"};
         static final int MSG_UPDATE_TIME = 0;
         Bitmap mHourBitmap, mHourScaledBitmap;
         Bitmap mMinuteBitmap, mMinuteScaledBitmap;
@@ -82,6 +80,8 @@ public class DLBRoundWatchFace extends CanvasWatchFaceService   {
         Time mTime;
         boolean mLowBitAmbient;
         boolean mRegisteredTimeZoneReceiver = false;
+        float mDateYOffset;
+        float mDayYOffset;
         Resources resources = DLBRoundWatchFace.this.getResources();
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
@@ -122,10 +122,10 @@ public class DLBRoundWatchFace extends CanvasWatchFaceService   {
                 mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square);
 
             }
-            Drawable drawable = resources.getDrawable(R.drawable.hand_hour_9);
+            Drawable drawable = resources.getDrawable(R.drawable.img195);
             mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
 
-            drawable = resources.getDrawable(R.drawable.hand_minute_9);
+            drawable = resources.getDrawable(R.drawable.img196);
             mMinuteBitmap = ((BitmapDrawable) drawable).getBitmap();
 
             drawable = resources.getDrawable(R.drawable.hand_second_9);
