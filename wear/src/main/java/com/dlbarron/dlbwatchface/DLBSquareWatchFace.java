@@ -117,13 +117,13 @@ public class DLBSquareWatchFace extends CanvasWatchFaceService   {
             mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square_face);
             mDayXOffset = resources.getDimension(R.dimen.x_day_offset_square_face);
             // Load the 3 hand images
-            Drawable drawable = resources.getDrawable(R.drawable.img195);
+            Drawable drawable = resources.getDrawable(R.drawable.silverhourhand);
             mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
 
             drawable = resources.getDrawable(R.drawable.img196);
             mMinuteBitmap = ((BitmapDrawable) drawable).getBitmap();
 
-            drawable = resources.getDrawable(R.drawable.img199);
+            drawable = resources.getDrawable(R.drawable.secondhand4);
             mSecondBitmap = ((BitmapDrawable) drawable).getBitmap();
             //Load the background
             drawable = resources.getDrawable(R.drawable.square_bg);

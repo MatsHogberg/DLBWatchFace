@@ -122,13 +122,13 @@ public class DLBRoundWatchFace extends CanvasWatchFaceService   {
                 mDayYOffset = resources.getDimension(R.dimen.y_day_offset_square);
 
             }
-            Drawable drawable = resources.getDrawable(R.drawable.img195);
+            Drawable drawable = resources.getDrawable(R.drawable.silverhourhand);
             mHourBitmap = ((BitmapDrawable) drawable).getBitmap();
 
             drawable = resources.getDrawable(R.drawable.img196);
             mMinuteBitmap = ((BitmapDrawable) drawable).getBitmap();
 
-            drawable = resources.getDrawable(R.drawable.hand_second_9);
+            drawable = resources.getDrawable(R.drawable.secondhand4);
             mSecondBitmap = ((BitmapDrawable) drawable).getBitmap();
 
             drawable = resources.getDrawable(R.drawable.round_bg);
